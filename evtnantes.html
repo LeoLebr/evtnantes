@@ -1,0 +1,66 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>evtnantes</title>
+</head>
+<body>
+<div id="nantes">
+    <!--<pre>{{ events }}</pre>-->
+    <ul v-for="e in events">
+        <li>
+            <p>{{ e.fields.ville }} | {{ e.fields.lieu }} | {{ e.fields.description }}</p>
+            <img :src="e.fields.media_1"></img>
+        </li>
+    </ul>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    var apiURL = 'https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_agenda-evenements-nantes-nantes-metropole&facet=emetteur&facet=rubrique&facet=lieu&facet=ville';
+
+    var nantes = new Vue({
+        el: '#nantes',
+
+        data: {
+            events: []
+        },
+
+        created: function(){
+            this.fetchData()
+        },
+
+        watch: {
+          currentBranch: 'fetchData'
+        },
+        /*filters: {
+            truncate: function (v) {
+                var newline = v.indexOf('\n')
+                return newline > 0 ? v.slice(0, newline) : v
+            },
+            formatDate: function (v) {
+                return v.replace(/T|Z/g, ' ')
+            }
+        },
+*/
+        methods: {
+            fetchData: function(){
+                var self = this;
+                axios.get(apiURL + this.currentBranch)
+                    .then(function(response){
+                        console.log(response);
+                        self.events = response.data.records;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+        }
+
+    });
+</script>
+</body>
+</html>
