@@ -142,14 +142,14 @@
                         <h5 class="card-title">{{ e.fields.nom }}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{ e.fields.ville }} | {{ e.fields.lieu }}</h6>
                         <p class="card-text">{{ e.fields.description }}</p>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ e.fields.date }}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ e.fields.date | moment }}</h6>
                     </div>
                 </div>
             </div>
             <div v-if="layout == 'line'" class="lline">
                 <div v-for="e in events" class="card">
                     <h6 class="card-title">{{ e.fields.nom }}</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ e.fields.date }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ e.fields.date | moment }}</h6>
                     <p class="card-subtitle mb-2 text-muted">{{ e.fields.lieu }}</p>
                     <img :src="e.fields.media_1">
                 </div>
@@ -157,13 +157,11 @@
 
     </form>
 </div>
-
+<script src="https://momentjs.com/downloads/moment.js"></script>
 <script>
     var apiURL = 'https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_agenda-evenements-nantes-nantes-metropole&facet=emetteur&facet=rubrique&facet=lieu&facet=ville';
-
     var nantes = new Vue({
         el: '#nantes',
-
         data: {
             events: [],
             layout: 'card'
@@ -197,6 +195,15 @@
                     .catch(function (error) {
                         console.log(error);
                     });
+            },
+            moment: function (date) {
+                return moment(date);
+            }
+        },
+
+        filters: {
+            moment: function (date) {
+                return moment(date).format('L');
             }
         }
 
