@@ -5,19 +5,158 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>evtnantes</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        *{
+            margin:0;
+            padding:0;
+        }
+
+
+        .bar{
+            background-color:#5c9bb7;
+
+            background-image:-webkit-linear-gradient(top, #5c9bb7, #5392ad);
+            background-image:-moz-linear-gradient(top, #5c9bb7, #5392ad);
+            background-image:linear-gradient(top, #5c9bb7, #5392ad);
+
+            box-shadow: 0 1px 1px #ccc;
+            border-radius: 2px;
+            width: 580px;
+            padding: 10px;
+            margin: 45px auto 25px;
+            position:relative;
+            text-align:right;
+            line-height: 1;
+        }
+
+        .bar a{
+            background:#4987a1 center center no-repeat;
+            width:32px;
+            height:32px;
+            display:inline-block;
+            text-decoration:none !important;
+            margin-right:5px;
+            border-radius:2px;
+            cursor:pointer;
+        }
+
+        .bar a.active{
+            background-color:#c14694;
+        }
+
+        .bar input{
+            background:#fff no-repeat 13px 13px;
+
+            border: none;
+            width: 100%;
+            line-height: 19px;
+            padding: 11px 0;
+
+            border-radius: 2px;
+            box-shadow: 0 2px 8px #c4c4c4 inset;
+            text-align: left;
+            font-size: 14px;
+            font-family: inherit;
+            color: #738289;
+            font-weight: bold;
+            outline: none;
+            text-indent: 40px;
+        }
+        /*-------------------------
+    	List layout
+    --------------------------*/
+
+        div.lcard {
+            list-style: none;
+            width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        div.lcard div{
+            border-bottom: 1px solid #ddd;
+            overflow: hidden;
+        }
+
+        div.lcard div img{
+            width: available;
+            height:available;
+        }
+
+        div.lcard div h5,h6,h7,p{
+            margin-left: 13px;
+        }
+
+        /*-------------------------
+            Grid layout
+        --------------------------*/
+
+        div.lline{
+            list-style: none;
+            width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        ul.lline div{
+            padding: 2px;
+            float: left;
+        }
+
+        div.lline div img{
+            width:100px;
+            height:100px;
+            object-fit: cover;
+            display: block;
+            margin: auto;
+            vertical-align: center;
+        }
+    </style>
+
 </head>
 <body>
-<div id="nantes">
-    <!--<pre>{{ events }}</pre>-->
-    <ul v-for="e in events">
-        <li>
-            <p>{{ e.fields.ville }} | {{ e.fields.lieu }} | {{ e.fields.description }}</p>
-            <img :src="e.fields.media_1">
-        </li>
-    </ul>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div id="nantes">
+    <form id="main" v-cloak>
+
+        <div class="bar">
+            <a class="cardl" v-bind:class="{ 'active': layout == 'card'}" v-on:click="layout = 'card'"></a>
+            <a class="linel" v-bind:class="{ 'active': layout == 'line'}" v-on:click="layout = 'line'"></a>
+        </div>
+
+
+            <!--<pre>{{ events }}</pre>-->
+            <div v-if="layout == 'card'" class="lcard">
+                <div v-for="e in events" class="card" style="width: 18rem; display: inline-grid">
+                    <img class="card-img-top" :src="e.fields.media_1">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ e.fields.nom }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ e.fields.ville }} | {{ e.fields.lieu }}</h6>
+                        <p class="card-text">{{ e.fields.description }}</p>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ e.fields.date }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div v-if="layout == 'line'" class="lline">
+                <div v-for="e in events" class="card">
+                    <h6 class="card-title">{{ e.fields.nom }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ e.fields.date }}</h6>
+                    <p class="card-subtitle mb-2 text-muted">{{ e.fields.lieu }}</p>
+                    <img :src="e.fields.media_1">
+                </div>
+            </div>
+
+    </form>
+</div>
 
 <script>
     var apiURL = 'https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_agenda-evenements-nantes-nantes-metropole&facet=emetteur&facet=rubrique&facet=lieu&facet=ville';
@@ -26,7 +165,8 @@
         el: '#nantes',
 
         data: {
-            events: []
+            events: [],
+            layout: 'card'
         },
 
         created: function(){
